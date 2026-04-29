@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:murafik/feature/auth/presentation/widgets/custom_text_field.dart';
-import 'package:murafik/feature/auth/presentation/widgets/primary_button.dart';
+import 'package:murafik/core/util/custom_text_field.dart';
+import 'package:murafik/core/util/primary_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String role;
