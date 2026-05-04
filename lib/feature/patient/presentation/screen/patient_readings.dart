@@ -29,15 +29,23 @@ class PatientReadingsScreen extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.asset('assets/images/background.png', fit: BoxFit.cover),
-          ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            itemCount: viewData.sensors.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final sensor = viewData.sensors[index];
-              return _ReadingTile(sensor: sensor);
-            },
-          ),
+          if (viewData.sensors.isEmpty)
+            const Center(
+              child: Text(
+                'No readings available',
+                style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
+              ),
+            )
+          else
+            ListView.separated(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+              itemCount: viewData.sensors.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final sensor = viewData.sensors[index];
+                return _ReadingTile(sensor: sensor);
+              },
+            ),
         ],
       ),
     );

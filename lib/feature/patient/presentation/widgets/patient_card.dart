@@ -30,6 +30,13 @@ class PatientCard extends StatelessWidget {
         : "NA";
 
     final isStable = status.toLowerCase() == "stable";
+    final hasCondition = _hasText(condition);
+    final hasAge = _hasText(age);
+    final hasDetails =
+        _hasText(age) ||
+        _hasText(gender) ||
+        _hasText(registrationDate) ||
+        _hasText(doctor);
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -87,14 +94,16 @@ class PatientCard extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                Text(
-                  condition,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                ),
+                if (hasCondition) ...[
+                  Text(
+                    condition,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
+                ],
 
-                if (age != null) ...[
+                if (hasAge) ...[
                   const SizedBox(height: 4),
                   Text(
                     "Age: $age",
@@ -110,49 +119,61 @@ class PatientCard extends StatelessWidget {
           // 🟢 Status + Arrow
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isStable
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  status,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isStable ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.w500,
+              if (_hasText(status))
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isStable
+                        ? Colors.green.withOpacity(0.1)
+                        : Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    status,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isStable ? Colors.green : Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
 
-              const SizedBox(width: 6),
-
-              GestureDetector(
-                onTap: () {
-                  context.push(
-                    '/PatientDetailsScreen',
-                    extra: {
-                      'name': name,
-                      'age': age ?? '',
-                      'gender': gender,
-                      'registrationDate': registrationDate,
-                      'doctor': doctor,
-                    },
-                  );
-                },
-                child: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.grey,
+              if (hasDetails) ...[
+                const SizedBox(width: 6),
+                GestureDetector(
+                  onTap: () {
+                    context.push(
+                      '/PatientDetailsScreen',
+                      extra: {
+                        'name': name,
+                        'age': age ?? '',
+                        'gender': gender,
+                        'registrationDate': registrationDate,
+                        'doctor': doctor,
+                      },
+                    );
+                  },
+                  child: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ],
       ),
     );
+  }
+
+  static bool _hasText(String? value) {
+    if (value == null) return false;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return false;
+    return trimmed.toUpperCase() != 'N/A';
   }
 }

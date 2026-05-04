@@ -29,6 +29,56 @@ class PatientDetailsScreen extends StatelessWidget {
         ? name.split(" ").take(2).map((e) => e[0]).join().toUpperCase()
         : "NA";
 
+    final infoItems = <_InfoItem>[
+      if (_hasText(age))
+        const _InfoItem(
+          icon: Icons.person_outline_rounded,
+          iconBg: Color(0xFFEFF6FF),
+          iconColor: Color(0xFF1A7FE8),
+          title: 'Age',
+          valueKey: 'age',
+        ),
+      if (_hasText(gender))
+        const _InfoItem(
+          icon: Icons.wc_rounded,
+          iconBg: Color(0xFFF0FDF4),
+          iconColor: Color(0xFF16A34A),
+          title: 'Gender',
+          valueKey: 'gender',
+        ),
+      if (_hasText(registrationDate))
+        const _InfoItem(
+          icon: Icons.calendar_today_rounded,
+          iconBg: Color(0xFFFFF7ED),
+          iconColor: Color(0xFFEA580C),
+          title: 'Reg. Date',
+          valueKey: 'registrationDate',
+        ),
+      if (_hasText(doctor))
+        const _InfoItem(
+          icon: Icons.local_hospital_rounded,
+          iconBg: Color(0xFFFDF4FF),
+          iconColor: Color(0xFF9333EA),
+          title: 'Doctor',
+          valueKey: 'doctor',
+        ),
+    ];
+
+    String _resolveValue(String key) {
+      switch (key) {
+        case 'age':
+          return age;
+        case 'gender':
+          return gender;
+        case 'registrationDate':
+          return registrationDate;
+        case 'doctor':
+          return doctor;
+        default:
+          return '';
+      }
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
@@ -108,48 +158,28 @@ class PatientDetailsScreen extends StatelessWidget {
 
                 const SizedBox(height: 14),
 
-                // 📄 Info Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
+                if (infoItems.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      children: [
+                        for (var i = 0; i < infoItems.length; i++)
+                          RowInfoPatient(
+                            icon: infoItems[i].icon,
+                            iconBg: infoItems[i].iconBg,
+                            iconColor: infoItems[i].iconColor,
+                            title: infoItems[i].title,
+                            value: _resolveValue(infoItems[i].valueKey),
+                            isLast: i == infoItems.length - 1,
+                          ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      RowInfoPatient(
-                        icon: Icons.person_outline_rounded,
-                        iconBg: const Color(0xFFEFF6FF),
-                        iconColor: const Color(0xFF1A7FE8),
-                        title: "Age",
-                        value: age,
-                      ),
-                      RowInfoPatient(
-                        icon: Icons.wc_rounded,
-                        iconBg: const Color(0xFFF0FDF4),
-                        iconColor: const Color(0xFF16A34A),
-                        title: "Gender",
-                        value: gender,
-                      ),
-                      RowInfoPatient(
-                        icon: Icons.calendar_today_rounded,
-                        iconBg: const Color(0xFFFFF7ED),
-                        iconColor: const Color(0xFFEA580C),
-                        title: "Reg. Date",
-                        value: registrationDate,
-                      ),
-                      RowInfoPatient(
-                        icon: Icons.local_hospital_rounded,
-                        iconBg: const Color(0xFFFDF4FF),
-                        iconColor: const Color(0xFF9333EA),
-                        title: "Doctor",
-                        value: doctor,
-                        isLast: true,
-                      ),
-                    ],
-                  ),
-                ),
 
                 // 🧑‍⚕️ Doctor Features
                 if (isDoctor) ...[
@@ -213,4 +243,26 @@ class PatientDetailsScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _InfoItem {
+  final IconData icon;
+  final Color iconBg;
+  final Color iconColor;
+  final String title;
+  final String valueKey;
+
+  const _InfoItem({
+    required this.icon,
+    required this.iconBg,
+    required this.iconColor,
+    required this.title,
+    required this.valueKey,
+  });
+}
+
+bool _hasText(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) return false;
+  return trimmed.toUpperCase() != 'N/A';
 }

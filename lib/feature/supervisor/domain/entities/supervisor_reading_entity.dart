@@ -1,0 +1,23 @@
+class SupervisorReadingEntity {
+  final Map<String, dynamic> raw;
+  final int id;
+  final int sensorId;
+  final String sensorName;
+  final String unit;
+  final String value;
+  final DateTime? timeStamp;
+  final bool hasAlert;
+  final String? alertType;
+
+  SupervisorReadingEntity({
+    required this.raw,
+    required this.id,
+    required this.sensorId,
+    required this.sensorName,
+    required this.unit,
+    required this.value,
+    required this.timeStamp,
+    required this.hasAlert,
+    this.alertType,
+  });
+}

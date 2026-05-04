@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:murafik/core/util/constant.dart';
+import 'package:murafik/feature/patient/presentation/controller/patient_home_view_data.dart';
 import 'package:murafik/feature/patient/presentation/widgets/device_status_chip.dart';
 
 class PatientHomeHeader extends StatelessWidget {
   final String patientName;
   final String greeting;
   final VoidCallback onNotificationsPressed;
+  final DeviceStatusViewData? deviceStatus;
 
   const PatientHomeHeader({
     super.key,
     required this.patientName,
     required this.greeting,
     required this.onNotificationsPressed,
+    this.deviceStatus,
   });
 
   @override
@@ -129,8 +132,13 @@ class PatientHomeHeader extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      DeviceStatusChip(),
+                      if (deviceStatus != null) ...[
+                        const SizedBox(height: 14),
+                        DeviceStatusChip(
+                          label: deviceStatus!.label,
+                          isConnected: deviceStatus!.isConnected,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -150,10 +158,15 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final parts = name.split(' ');
+    final trimmed = name.trim();
+    final parts = trimmed.isEmpty ? <String>[] : trimmed.split(' ');
     final initials = parts.length >= 2
         ? '${parts[0][0]}${parts[1][0]}'
-        : name.substring(0, 2).toUpperCase();
+        : (trimmed.isNotEmpty
+              ? (trimmed.length == 1
+                    ? trimmed.toUpperCase()
+                    : trimmed.substring(0, 2).toUpperCase())
+              : 'NA');
 
     return Container(
       width: 44,

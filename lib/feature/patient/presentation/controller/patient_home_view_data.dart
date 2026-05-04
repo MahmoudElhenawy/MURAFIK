@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class PatientHomeViewData {
   final String patientName;
   final String greeting;
-  final DoctorInfo doctor;
+  final DoctorInfo? doctor;
   final List<SensorReadingViewData> sensors;
   final List<PatientAlertViewData> alerts;
+  final DeviceStatusViewData? deviceStatus;
 
   static const preview = PatientHomeViewData(
     patientName: 'mahmoud elhenawy',
@@ -13,6 +14,7 @@ class PatientHomeViewData {
     doctor: DoctorInfo(
       name: 'Dr. Mohamed Salah',
       specialty: 'Neurology · Cairo Medical Center',
+      phone: '01000000000',
     ),
     sensors: [
       SensorReadingViewData(
@@ -103,22 +105,41 @@ class PatientHomeViewData {
         severity: AlertSeverity.info,
       ),
     ],
+    deviceStatus: DeviceStatusViewData(
+      label: 'Device connected',
+      isConnected: true,
+    ),
   );
 
   const PatientHomeViewData({
     required this.patientName,
     required this.greeting,
-    required this.doctor,
+    this.doctor,
     required this.sensors,
     required this.alerts,
+    this.deviceStatus,
   });
+
+  static const empty = PatientHomeViewData(
+    patientName: '',
+    greeting: '',
+    doctor: null,
+    sensors: [],
+    alerts: [],
+    deviceStatus: null,
+  );
 }
 
 class DoctorInfo {
   final String name;
   final String specialty;
+  final String phone;
 
-  const DoctorInfo({required this.name, required this.specialty});
+  const DoctorInfo({
+    required this.name,
+    required this.specialty,
+    required this.phone,
+  });
 }
 
 class SensorReadingViewData {
@@ -157,6 +178,13 @@ class PatientAlertViewData {
     required this.time,
     required this.severity,
   });
+}
+
+class DeviceStatusViewData {
+  final String label;
+  final bool isConnected;
+
+  const DeviceStatusViewData({required this.label, required this.isConnected});
 }
 
 enum SensorStatus { normal, elevated, alert }
