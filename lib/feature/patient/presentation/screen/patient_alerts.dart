@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:murafik/core/util/constant.dart';
 import 'package:murafik/feature/patient/presentation/controller/patient_home_view_data.dart';
 import 'package:murafik/feature/patient/presentation/widgets/alart_item.dart';
 
@@ -14,8 +15,14 @@ class PatientAlertsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
-        title: const Text('Alerts'),
-        backgroundColor: Colors.blue,
+        centerTitle: true,
+        title: const Text(
+          'Alerts',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: kPGradient),
+        ),
         foregroundColor: const Color(0xFFffffff),
         elevation: 0,
       ),

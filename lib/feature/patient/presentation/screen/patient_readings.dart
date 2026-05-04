@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:murafik/core/util/constant.dart';
 import 'package:murafik/feature/patient/presentation/controller/patient_home_view_data.dart';
 
 class PatientReadingsScreen extends StatelessWidget {
@@ -13,8 +14,14 @@ class PatientReadingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
-        title: const Text('Readings'),
-        backgroundColor: Colors.blue,
+        centerTitle: true,
+        title: const Text(
+          'Readings',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: kPGradient),
+        ),
         foregroundColor: const Color(0xFFffffff),
         elevation: 0,
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:murafik/core/util/constant.dart';
 import 'package:murafik/feature/patient/presentation/widgets/device_status_chip.dart';
 
 class PatientHomeHeader extends StatelessWidget {
@@ -66,13 +67,7 @@ class PatientHomeHeader extends StatelessWidget {
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF1A7FE8), Color(0xFF0A5CC7), Color(0xFF0847A8)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          decoration: const BoxDecoration(gradient: kPGradient),
           child: Stack(
             children: [
               Positioned(

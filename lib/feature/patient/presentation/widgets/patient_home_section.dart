@@ -11,7 +11,7 @@ class PatientHomeSection extends StatelessWidget {
   const PatientHomeSection({
     super.key,
     required this.title,
-    required this.child,
+    this.child = const SizedBox.shrink(),
     this.actionLabel,
     this.onAction,
     this.headerSpacing = 12,
