@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:murafik/core/service_locator/service_locator.dart';
+import 'package:murafik/core/util/primary_button.dart';
 import 'package:murafik/feature/patient/presentation/controller/patient_home_view_data.dart';
 import 'package:murafik/feature/patient/presentation/widgets/patient_alerts_list.dart';
 import 'package:murafik/feature/patient/presentation/widgets/patient_card.dart';
@@ -128,7 +129,12 @@ class SupervisorHome extends StatelessWidget {
                                   : const _EmptyAlertsCard(),
                             ),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 40),
+                            PrimaryButton(
+                              text: 'Go To Choose Role',
+                              onPressed: () =>
+                                  context.push('/choose-role', extra: viewData),
+                            ),
                           ]),
                         ),
                       ),

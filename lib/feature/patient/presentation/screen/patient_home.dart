@@ -133,11 +133,9 @@ class PatientHomeScreen extends StatelessWidget {
 
                             const SizedBox(height: 50),
                             PrimaryButton(
-                              text: 'Go to Supervisor',
-                              onPressed: () => context.push(
-                                '/supervisorHome',
-                                extra: viewData,
-                              ),
+                              text: 'Go To Choose Role',
+                              onPressed: () =>
+                                  context.push('/choose-role', extra: viewData),
                             ),
                           ]),
                         ),
