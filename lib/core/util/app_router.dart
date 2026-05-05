@@ -16,7 +16,7 @@ import 'package:murafik/feature/supervisor/presentation/screens/supervisor_home.
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/SplashScreen',
+    initialLocation: '/splash',
     routes: [
       GoRoute(
         path: '/choose-role',
@@ -30,20 +30,28 @@ class AppRouter {
       GoRoute(
         path: '/register',
         builder: (context, state) {
-          final role = state.extra as String;
+          final extra = state.extra;
+          final role = extra is String ? extra : '';
+          if (role.isEmpty) {
+            return const ChoseUser();
+          }
           return RegisterScreen(role: role);
         },
       ),
 
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
-        path: '/PatientHome',
+        path: '/patient/home',
         builder: (context, state) => const PatientHomeScreen(),
       ),
       GoRoute(
-        path: '/PatientDetailsScreen',
+        path: '/patient/details',
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>?;
+          final rawId = data?['patientId'];
+          final patientId = rawId is int
+              ? rawId
+              : int.tryParse(rawId?.toString() ?? '');
 
           return PatientDetailsScreen(
             name: data?['name'] ?? '',
@@ -51,7 +59,12 @@ class AppRouter {
             gender: data?['gender'] ?? '',
             registrationDate: data?['registrationDate'] ?? '',
             doctor: data?['doctor'] ?? '',
+            phone: data?['phone'] ?? '',
+            address: data?['address'] ?? '',
+            status: data?['status'] ?? '',
+            deviceSerial: data?['deviceSerial'] ?? '',
             isDoctor: data?['isDoctor'] ?? false,
+            patientId: patientId,
           );
         },
       ),
@@ -74,15 +87,15 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/supervisorHome',
+        path: '/supervisor/home',
         builder: (context, state) => const SupervisorHome(),
       ),
       GoRoute(
-        path: '/doctorHome',
+        path: '/doctor/home',
         builder: (context, state) => const DoctorHome(),
       ),
       GoRoute(
-        path: '/SplashScreen',
+        path: '/splash',
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(

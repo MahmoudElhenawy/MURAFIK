@@ -7,6 +7,18 @@ import 'package:murafik/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:murafik/feature/auth/domain/usecases/login_usecase.dart';
 import 'package:murafik/feature/auth/domain/usecases/register_usecase.dart';
 import 'package:murafik/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:murafik/feature/doctor/data/datasources/doctor_remote_datasource.dart';
+import 'package:murafik/feature/doctor/data/repositories/doctor_repository_impl.dart';
+import 'package:murafik/feature/doctor/domain/repositories/doctor_repository.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_all_alerts_usecase.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_my_info_usecase.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_patient_alerts_usecase.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_patient_readings_usecase.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_patients_usecase.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_priority_patients_usecase.dart';
+import 'package:murafik/feature/doctor/presentation/controller/doctor_alerts_cubit.dart';
+import 'package:murafik/feature/doctor/presentation/controller/doctor_home_cubit.dart';
+import 'package:murafik/feature/doctor/presentation/controller/doctor_patients_cubit.dart';
 import 'package:murafik/feature/patient/data/datasources/patient_remote_datasource.dart';
 import 'package:murafik/feature/patient/data/repositories/patient_repository_impl.dart';
 import 'package:murafik/feature/patient/domain/repositories/patient_repository.dart';
@@ -63,6 +75,9 @@ void setupServiceLocator() {
   getIt.registerSingleton<PatientRemoteDataSource>(
     PatientRemoteDataSourceImpl(getIt<Dio>()),
   );
+  getIt.registerSingleton<DoctorRemoteDataSource>(
+    DoctorRemoteDataSourceImpl(getIt<Dio>()),
+  );
   getIt.registerSingleton<SupervisorRemoteDataSource>(
     SupervisorRemoteDataSourceImpl(getIt<Dio>()),
   );
@@ -73,6 +88,9 @@ void setupServiceLocator() {
   );
   getIt.registerSingleton<PatientRepository>(
     PatientRepositoryImpl(getIt<PatientRemoteDataSource>()),
+  );
+  getIt.registerSingleton<DoctorRepository>(
+    DoctorRepositoryImpl(getIt<DoctorRemoteDataSource>()),
   );
   getIt.registerSingleton<SupervisorRepository>(
     SupervisorRepositoryImpl(getIt<SupervisorRemoteDataSource>()),
@@ -102,6 +120,25 @@ void setupServiceLocator() {
   );
   getIt.registerSingleton<GetDeviceUsecase>(
     GetDeviceUsecase(getIt<PatientRepository>()),
+  );
+
+  getIt.registerSingleton<GetDoctorMyInfoUsecase>(
+    GetDoctorMyInfoUsecase(getIt<DoctorRepository>()),
+  );
+  getIt.registerSingleton<GetDoctorPatientsUsecase>(
+    GetDoctorPatientsUsecase(getIt<DoctorRepository>()),
+  );
+  getIt.registerSingleton<GetDoctorPatientReadingsUsecase>(
+    GetDoctorPatientReadingsUsecase(getIt<DoctorRepository>()),
+  );
+  getIt.registerSingleton<GetDoctorPatientAlertsUsecase>(
+    GetDoctorPatientAlertsUsecase(getIt<DoctorRepository>()),
+  );
+  getIt.registerSingleton<GetDoctorAllAlertsUsecase>(
+    GetDoctorAllAlertsUsecase(getIt<DoctorRepository>()),
+  );
+  getIt.registerSingleton<GetDoctorPriorityPatientsUsecase>(
+    GetDoctorPriorityPatientsUsecase(getIt<DoctorRepository>()),
   );
 
   getIt.registerSingleton<GetSupervisorMyInfoUsecase>(
@@ -140,6 +177,26 @@ void setupServiceLocator() {
       getLatestReadingsUsecase: getIt<GetLatestReadingsUsecase>(),
       getAlertsUsecase: getIt<GetAlertsUsecase>(),
       getDeviceUsecase: getIt<GetDeviceUsecase>(),
+    ),
+  );
+
+  getIt.registerSingleton<DoctorHomeCubit>(
+    DoctorHomeCubit(
+      getMyInfoUsecase: getIt<GetDoctorMyInfoUsecase>(),
+      getAllAlertsUsecase: getIt<GetDoctorAllAlertsUsecase>(),
+      getPriorityPatientsUsecase: getIt<GetDoctorPriorityPatientsUsecase>(),
+    ),
+  );
+
+  getIt.registerSingleton<DoctorPatientsCubit>(
+    DoctorPatientsCubit(
+      getDoctorPatientsUsecase: getIt<GetDoctorPatientsUsecase>(),
+    ),
+  );
+
+  getIt.registerSingleton<DoctorAlertsCubit>(
+    DoctorAlertsCubit(
+      getDoctorAllAlertsUsecase: getIt<GetDoctorAllAlertsUsecase>(),
     ),
   );
 

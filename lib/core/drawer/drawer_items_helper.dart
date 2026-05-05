@@ -11,12 +11,12 @@ List<DrawerItemModel> getDrawerItems(BuildContext context, UserRole role) {
         DrawerItemModel(
           icon: Icons.dashboard,
           title: "Supervisor Home",
-          onTap: () => context.push('/supervisorHome'),
+          onTap: () => context.push('/supervisor/home'),
         ),
         DrawerItemModel(
           icon: Icons.person,
           title: "Patient",
-          onTap: () => context.push('/PatientDetailsScreen'),
+          onTap: () => context.push('/patient/details'),
         ),
         DrawerItemModel(
           icon: Icons.notifications,

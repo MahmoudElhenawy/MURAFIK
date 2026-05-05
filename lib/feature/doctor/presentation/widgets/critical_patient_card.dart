@@ -5,11 +5,23 @@ import 'package:go_router/go_router.dart';
 class CriticalPatientCard extends StatelessWidget {
   final String name;
   final String condition;
+  final String age;
+  final String gender;
+  final String phone;
+  final String alertType;
+  final String currentValue;
+  final int patientId;
 
   const CriticalPatientCard({
     super.key,
     required this.name,
     required this.condition,
+    required this.age,
+    required this.gender,
+    required this.phone,
+    required this.alertType,
+    required this.currentValue,
+    required this.patientId,
   });
 
   @override
@@ -24,13 +36,17 @@ class CriticalPatientCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.push(
-          '/PatientDetailsScreen',
+          '/patient/details',
           extra: {
+            'patientId': patientId,
             'name': name,
-            'age': "45",
-            'gender': "Male",
-            'registrationDate': "2024-01-10",
-            'doctor': "Dr. Ahmed",
+            'age': age,
+            'gender': gender,
+            'registrationDate': '',
+            'doctor': '',
+            'phone': phone,
+            'status': alertType,
+            'deviceSerial': '',
             'isDoctor': true,
           },
         );

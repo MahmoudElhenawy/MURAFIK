@@ -240,13 +240,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final normalized = role.trim().toLowerCase();
     switch (normalized) {
       case 'supervisor':
-        return '/supervisorHome';
+        return '/supervisor/home';
       case 'doctor':
-        return '/doctorHome';
+        return '/doctor/home';
       case 'patient':
-        return '/PatientHome';
+        return '/patient/home';
       default:
-        return '/PatientHome';
+        return '/patient/home';
     }
   }
 

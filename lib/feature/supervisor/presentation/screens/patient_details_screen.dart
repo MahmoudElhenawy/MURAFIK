@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:murafik/core/service_locator/service_locator.dart';
 import 'package:murafik/core/util/constant.dart';
 import 'package:murafik/core/util/primary_button.dart';
+import 'package:murafik/feature/doctor/domain/entities/doctor_reading_entity.dart';
+import 'package:murafik/feature/doctor/domain/usecases/get_doctor_patient_readings_usecase.dart';
 import 'package:murafik/feature/supervisor/presentation/widgets/row_info_patient.dart';
 import 'package:murafik/feature/doctor/presentation/widgets/reading_card.dart';
 
@@ -11,7 +14,12 @@ class PatientDetailsScreen extends StatelessWidget {
   final String gender;
   final String registrationDate;
   final String doctor;
+  final String phone;
+  final String address;
+  final String status;
+  final String deviceSerial;
   final bool isDoctor;
+  final int? patientId;
 
   const PatientDetailsScreen({
     super.key,
@@ -20,7 +28,12 @@ class PatientDetailsScreen extends StatelessWidget {
     required this.gender,
     required this.registrationDate,
     required this.doctor,
+    this.phone = '',
+    this.address = '',
+    this.status = '',
+    this.deviceSerial = '',
     this.isDoctor = false,
+    this.patientId,
   });
 
   @override
@@ -62,6 +75,38 @@ class PatientDetailsScreen extends StatelessWidget {
           title: 'Doctor',
           valueKey: 'doctor',
         ),
+      if (_hasText(phone))
+        const _InfoItem(
+          icon: Icons.phone_rounded,
+          iconBg: Color(0xFFEFF6FF),
+          iconColor: Color(0xFF1D4ED8),
+          title: 'Phone',
+          valueKey: 'phone',
+        ),
+      if (_hasText(address))
+        const _InfoItem(
+          icon: Icons.location_on_outlined,
+          iconBg: Color(0xFFF0FDF4),
+          iconColor: Color(0xFF16A34A),
+          title: 'Address',
+          valueKey: 'address',
+        ),
+      if (_hasText(status))
+        const _InfoItem(
+          icon: Icons.favorite_outline,
+          iconBg: Color(0xFFFFF1F2),
+          iconColor: Color(0xFFE11D48),
+          title: 'Status',
+          valueKey: 'status',
+        ),
+      if (_hasText(deviceSerial))
+        const _InfoItem(
+          icon: Icons.memory_outlined,
+          iconBg: Color(0xFFF5F3FF),
+          iconColor: Color(0xFF7C3AED),
+          title: 'Device',
+          valueKey: 'deviceSerial',
+        ),
     ];
 
     String _resolveValue(String key) {
@@ -74,6 +119,14 @@ class PatientDetailsScreen extends StatelessWidget {
           return registrationDate;
         case 'doctor':
           return doctor;
+        case 'phone':
+          return phone;
+        case 'address':
+          return address;
+        case 'status':
+          return status;
+        case 'deviceSerial':
+          return deviceSerial;
         default:
           return '';
       }
@@ -184,48 +237,7 @@ class PatientDetailsScreen extends StatelessWidget {
                 // 🧑‍⚕️ Doctor Features
                 if (isDoctor) ...[
                   const SizedBox(height: 16),
-
-                  // 📊 Readings
-                  Row(
-                    children: const [
-                      ReadingCard(
-                        title: "Heart",
-                        value: "85 bpm",
-                        icon: Icons.favorite,
-                        color: Colors.red,
-                      ),
-                      ReadingCard(
-                        title: "Temp",
-                        value: "37 °C",
-                        icon: Icons.thermostat,
-                        color: Colors.orange,
-                      ),
-                      ReadingCard(
-                        title: "O2",
-                        value: "98%",
-                        icon: Icons.air,
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // 🚨 Alerts
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.warning, color: Colors.red),
-                        SizedBox(width: 10),
-                        Expanded(child: Text("High heart rate detected")),
-                      ],
-                    ),
-                  ),
+                  _DoctorReadingsSection(patientId: patientId),
                 ],
 
                 // 👨‍💼 Supervisor Button
@@ -233,7 +245,7 @@ class PatientDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   PrimaryButton(
                     text: "Go To Home",
-                    onPressed: () => context.go('/supervisorHome'),
+                    onPressed: () => context.go('/supervisor/home'),
                   ),
                 ],
               ],
@@ -259,6 +271,178 @@ class _InfoItem {
     required this.title,
     required this.valueKey,
   });
+}
+
+class _DoctorReadingsSection extends StatelessWidget {
+  final int? patientId;
+
+  const _DoctorReadingsSection({required this.patientId});
+
+  @override
+  Widget build(BuildContext context) {
+    if (patientId == null) {
+      return _readingsMessage('No readings available');
+    }
+
+    return FutureBuilder(
+      future: getIt<GetDoctorPatientReadingsUsecase>().call(
+        patientId: patientId!,
+        limit: 20,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _readingsMessage('Loading readings...');
+        }
+
+        final result = snapshot.data;
+        if (result == null) {
+          return _readingsMessage('No readings available');
+        }
+
+        return result.fold((failure) => _readingsMessage(failure.message), (
+          data,
+        ) {
+          final readings = data.readings;
+          if (readings.isEmpty) {
+            return _readingsMessage('No readings available');
+          }
+
+          final heart = _findLatest(readings, 'Heart Rate');
+          final temp = _findLatest(readings, 'Body Temperature');
+          final oxygen = _findLatest(readings, 'Blood Oxygen');
+          final alert = _findFirstAlert(readings);
+
+          return Column(
+            children: [
+              Row(
+                children: [
+                  ReadingCard(
+                    title: 'Heart',
+                    value: _formatValue(heart),
+                    icon: Icons.favorite,
+                    color: Colors.red,
+                  ),
+                  ReadingCard(
+                    title: 'Temp',
+                    value: _formatValue(temp),
+                    icon: Icons.thermostat,
+                    color: Colors.orange,
+                  ),
+                  ReadingCard(
+                    title: 'O2',
+                    value: _formatValue(oxygen),
+                    icon: Icons.air,
+                    color: Colors.blue,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _alertBanner(alert),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  static DoctorReadingEntity? _findLatest(
+    List<DoctorReadingEntity> readings,
+    String sensorName,
+  ) {
+    final target = sensorName.toLowerCase();
+    DoctorReadingEntity? latest;
+    for (final reading in readings) {
+      if (reading.sensorName.toLowerCase() != target) {
+        continue;
+      }
+      if (latest == null) {
+        latest = reading;
+        continue;
+      }
+      final currentTs = reading.timeStamp?.millisecondsSinceEpoch ?? 0;
+      final latestTs = latest.timeStamp?.millisecondsSinceEpoch ?? 0;
+      if (currentTs > latestTs) {
+        latest = reading;
+      }
+    }
+    return latest;
+  }
+
+  static DoctorReadingEntity? _findFirstAlert(
+    List<DoctorReadingEntity> readings,
+  ) {
+    DoctorReadingEntity? latestAlert;
+    for (final reading in readings) {
+      if (!reading.hasAlert) {
+        continue;
+      }
+      if (latestAlert == null) {
+        latestAlert = reading;
+        continue;
+      }
+      final currentTs = reading.timeStamp?.millisecondsSinceEpoch ?? 0;
+      final latestTs = latestAlert.timeStamp?.millisecondsSinceEpoch ?? 0;
+      if (currentTs > latestTs) {
+        latestAlert = reading;
+      }
+    }
+    return latestAlert;
+  }
+
+  static String _formatValue(DoctorReadingEntity? reading) {
+    if (reading == null) return '--';
+    final unit = reading.unit.trim();
+    if (unit.isEmpty) return reading.value;
+    return '${reading.value} $unit';
+  }
+
+  static String _formatAlertTitle(DoctorReadingEntity alert) {
+    final type = alert.alertType?.toLowerCase() ?? 'alert';
+    final severity = type == 'high' || type == 'critical' ? 'High' : 'Low';
+    return '$severity ${alert.sensorName}';
+  }
+
+  static Widget _alertBanner(DoctorReadingEntity? alert) {
+    final hasAlert = alert != null;
+    final message = hasAlert
+        ? '${_formatAlertTitle(alert)}: ${_formatValue(alert)}'
+        : 'No alerts right now';
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            hasAlert ? Icons.warning : Icons.check_circle_outline,
+            color: hasAlert ? Colors.red : const Color(0xFF16A34A),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Text(message)),
+        ],
+      ),
+    );
+  }
+
+  static Widget _readingsMessage(String message) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline, color: Color(0xFF64748B)),
+          const SizedBox(width: 10),
+          Expanded(child: Text(message)),
+        ],
+      ),
+    );
+  }
 }
 
 bool _hasText(String value) {

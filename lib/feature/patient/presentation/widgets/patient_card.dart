@@ -11,6 +11,7 @@ class PatientCard extends StatelessWidget {
   final String gender;
   final String registrationDate;
   final String doctor;
+  final VoidCallback? onDetailsTap;
 
   const PatientCard({
     super.key,
@@ -21,6 +22,7 @@ class PatientCard extends StatelessWidget {
     required this.gender,
     required this.registrationDate,
     required this.doctor,
+    this.onDetailsTap,
   });
 
   @override
@@ -144,18 +146,20 @@ class PatientCard extends StatelessWidget {
               if (hasDetails) ...[
                 const SizedBox(width: 6),
                 GestureDetector(
-                  onTap: () {
-                    context.push(
-                      '/PatientDetailsScreen',
-                      extra: {
-                        'name': name,
-                        'age': age ?? '',
-                        'gender': gender,
-                        'registrationDate': registrationDate,
-                        'doctor': doctor,
+                  onTap:
+                      onDetailsTap ??
+                      () {
+                        context.push(
+                          '/patient/details',
+                          extra: {
+                            'name': name,
+                            'age': age ?? '',
+                            'gender': gender,
+                            'registrationDate': registrationDate,
+                            'doctor': doctor,
+                          },
+                        );
                       },
-                    );
-                  },
                   child: const Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
