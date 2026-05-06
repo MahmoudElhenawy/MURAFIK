@@ -19,7 +19,7 @@ abstract class SupervisorRemoteDataSource {
 
 class SupervisorRemoteDataSourceImpl implements SupervisorRemoteDataSource {
   final Dio dio;
-  static const String baseUrl = 'http://murafik.runasp.net/api/supervisor';
+  static const String baseUrl = 'https://murafik.runasp.net/api/supervisor';
 
   SupervisorRemoteDataSourceImpl(this.dio);
 

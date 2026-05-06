@@ -21,7 +21,7 @@ abstract class PatientRemoteDataSource {
 
 class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   final Dio dio;
-  static const String baseUrl = 'http://murafik.runasp.net/api/patient';
+  static const String baseUrl = 'https://murafik.runasp.net/api/patient';
 
   PatientRemoteDataSourceImpl(this.dio);
 

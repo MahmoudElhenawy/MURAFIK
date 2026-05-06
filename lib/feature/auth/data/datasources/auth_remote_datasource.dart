@@ -18,7 +18,7 @@ abstract class AuthRemoteDataSource {
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio dio;
-  static const String baseUrl = 'http://murafik.runasp.net/api/auth';
+  static const String baseUrl = 'https://murafik.runasp.net/api/auth';
 
   AuthRemoteDataSourceImpl(this.dio);
 
